@@ -1,0 +1,4 @@
+CsGL2D/.vs
+CsGL2D/*/bin
+CsGL2D/*/obj
+*.csproj.user
