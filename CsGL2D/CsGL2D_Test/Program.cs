@@ -11,6 +11,7 @@ namespace CsGL2D_Test
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("start");
             var form = new Form();
             form.BackColor = Color.Gray;
             GL2D.SetRenderControl(form);

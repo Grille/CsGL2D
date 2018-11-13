@@ -22,6 +22,8 @@ namespace CsGL2D
         }
         public Texture(string path)
         {
+            if (!File.Exists(path))
+                throw new Exception("texture source file \""+Path.GetFullPath(path)+"\" not exists");
             addToAtlas(new Bitmap(path));
         }
         public Texture(int width, int height)

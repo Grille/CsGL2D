@@ -9,24 +9,20 @@ namespace CsGL2D
 {
     public static class TextureAtlas
     {
-        static internal int layerSize = 2048, tileSize = 64;
+        static internal int layerSize = 2048, tileSize = 64, layer = 16;
         static internal int TextureArray;
         static int nextID = 1;
         static private TextureLayer[] textureLayers;
         static TextureAtlas()
         {
-            Console.WriteLine(GL.GetInteger(GetPName.MaxTextureSize));
-            Console.WriteLine(GL.GetInteger(GetPName.MaxArrayTextureLayers));
-            //OpenTK.GLControl gLControl = new OpenTK.GLControl();
-            //GLControl glControl = new GLControl();
-            //glControl.CreateControl();
+            if (GL2D.IsRendererReady() != 0)
+                GL2D.CreateThempContext();
             //gameWindow;
             textureLayers = new TextureLayer[0];
             TextureArray = GL.GenTexture();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2DArray, TextureArray);
-            GL.TextureStorage3D(TextureArray, 1, SizedInternalFormat.Rgba8, 2048, 2048, 8);
-            GL2D.LogError("_InitAtlas");
+            GL.TextureStorage3D(TextureArray, 1, SizedInternalFormat.Rgba8, 2048, 2048, layer);
         }
         static public void _DEBUG()
         {

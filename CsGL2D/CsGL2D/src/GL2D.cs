@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Collections.Generic;
 //using System.Linq;
 using System.Text;
@@ -17,11 +18,18 @@ using System.Runtime.InteropServices;
 
 namespace CsGL2D
 {
-    public class GL2D
+    public static class GL2D
     {
         static GLControl glControl;
+        internal static void CreateThempContext()
+        {
+            glControl = new GLControl(GraphicsMode.Default, 3, 0,GraphicsContextFlags.Default);
+            glControl.CreateControl();
+        }
         public static void SetRenderControl(System.Windows.Forms.Control control)
         {
+            //Console.WriteLine(Assembly.GetExecutingAssembly().GetManifestResourceNames()[0]);
+            
             glControl = new GLControl(
             GraphicsMode.Default, 3, 0,
             GraphicsContextFlags.Default);
@@ -100,18 +108,15 @@ namespace CsGL2D
             GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, new IntPtr(positionData.Length * 8), positionData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(positionAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
 
-            
             GL.GenBuffers(1, out texturePosBuffer);
             GL.BindBuffer(BufferTarget.ArrayBuffer, texturePosBuffer);
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, new IntPtr(texturePosData.Length * 12), texturePosData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(texturePosAttrib, 3, VertexAttribPointerType.Float, false, 0, 0);
 
-            
             GL.GenBuffers(1, out colorBuffer);
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorBuffer);
             GL.BufferData<Vector4>(BufferTarget.ArrayBuffer, new IntPtr(colorData.Length * 16), colorData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(colorAttrib, 4, VertexAttribPointerType.Float, false, 0, 0);
-            
         }
 
         public static void UpdateBuffer()
@@ -140,6 +145,7 @@ namespace CsGL2D
         }
         public static void DrawImage(Texture texture, Rectangle src, Rectangle dst, Color color)
         {
+            
             positionData[vertexOffset + 0] = new Vector2(dst.X, dst.Y); //ol
             positionData[vertexOffset + 1] = new Vector2(dst.X+dst.Width, dst.Y); //or
             positionData[vertexOffset + 2] = new Vector2(dst.X + dst.Width, dst.Y + dst.Height); //ur
@@ -177,66 +183,25 @@ namespace CsGL2D
         public static int CreateShader()
         {
             return CreateShader(
-                @"
-                #version 400
-                uniform vec2 uResolution;
-
-                in vec2 aPosition;
-                in vec3 aTexturePos;
-                in vec4 aColor;
-
-                out vec2 vPosition;
-                out vec3 vTexturePos;
-                out vec4 vColor;
-
-                void main(void)
-                {
-                  vPosition = ((aPosition/uResolution*2)-1);
-                  vPosition.y = -vPosition.y;
-                  vTexturePos = aTexturePos;
-                  vTexturePos.x /= 2048.0;
-                  vTexturePos.y /= 2048.0;
-                  vColor = aColor/255;
-                  gl_Position = vec4(vPosition,0, 1);
-                }
-                ", @"
-                #version 400
-                uniform sampler2DArray uSampler;
-
-                in vec3 vTexturePos;
-                in vec4 vColor;
-
-                out vec4 color;
-
-                void main(void)
-                {
-                  vec4 texture = texture(uSampler, vTexturePos);
-                  color = vec4(texture);
-                }"
+                new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dvertex.glsl")).ReadToEnd()
+                ,
+                new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dframe.glsl")).ReadToEnd()
             );
         }
-        private static int compileShader(string code, ShaderType type)
+        public static int CreateShader(string fragmentShaderCode)
         {
-            string errorLog;
-            int shader = GL.CreateShader(type);
-            int status_code;
-            GL.ShaderSource(shader, code);
-            GL.CompileShader(shader);
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out status_code);
-            if (status_code != 1)
-            {
-                Console.WriteLine(errorLog = type + ":\n" + GL.GetShaderInfoLog(shader));
-                return -1;
-            }
-            else return shader;
-
+            return CreateShader(
+                new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dvertex.glsl")).ReadToEnd()
+                ,
+                fragmentShaderCode
+            );
         }
         public static int CreateShader(string vertexShaderCode, string fragmentShaderCode)
         {
             try
             {
 
-
+                LogError("0");
                 int vertexShader = compileShader(vertexShaderCode, ShaderType.VertexShader);
                 int fragmentShader = compileShader(fragmentShaderCode, ShaderType.FragmentShader);
 
@@ -252,18 +217,14 @@ namespace CsGL2D
 
 
                 positionAttrib = GL.GetAttribLocation(shaderProgram, "aPosition");
-                GL.EnableVertexAttribArray(positionAttrib);
-
-
                 texturePosAttrib = GL.GetAttribLocation(shaderProgram, "aTexturePos");
-                GL.EnableVertexAttribArray(texturePosAttrib);
-
-                /*
-                textureIndexAttrib = GL.GetAttribLocation(shaderProgram, "aTextureIndex");
-                GL.EnableVertexAttribArray(texturePosAttrib);
-                */
-
+                LogError("0");
                 colorAttrib = GL.GetAttribLocation(shaderProgram, "aColor");
+
+
+
+                GL.EnableVertexAttribArray(positionAttrib);
+                GL.EnableVertexAttribArray(texturePosAttrib);
                 GL.EnableVertexAttribArray(colorAttrib);
 
                 //uniforms
@@ -285,6 +246,23 @@ namespace CsGL2D
             }
 
         }
+        private static int compileShader(string code, ShaderType type)
+        {
+            string errorLog;
+            int shader = GL.CreateShader(type);
+            int status_code;
+            GL.ShaderSource(shader, code);
+            GL.CompileShader(shader);
+            GL.GetShader(shader, ShaderParameter.CompileStatus, out status_code);
+            if (status_code != 1)
+            {
+                Console.WriteLine(errorLog = type + ":\n" + GL.GetShaderInfoLog(shader));
+                return -1;
+            }
+            else return shader;
+
+        }
+
         public static void UseShader(int shaderProgram)
         {
 
@@ -305,9 +283,7 @@ namespace CsGL2D
         public static void Render()
         {
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
-            LogError("_Viewport");
             GL.Uniform2(resolutionUniform, new Vector2(glControl.Width, glControl.Height));
-            LogError("_Uniform");
             //GL.DrawArrays(PrimitiveType.Triangles, 0, vertexOffset);
             //GL.DrawElements(BeginMode.Triangles,vertexOffset,DrawElementsType.)
 
@@ -315,9 +291,7 @@ namespace CsGL2D
             GL.BindTexture(TextureTarget.Texture2DArray, TextureAtlas.TextureArray);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-            LogError("_Other");
             GL.DrawElements(BeginMode.Triangles, indexOffset, DrawElementsType.UnsignedInt, 0);
-            LogError("_Draw");
             vertexOffset = 0;
             indexOffset = 0;
         }

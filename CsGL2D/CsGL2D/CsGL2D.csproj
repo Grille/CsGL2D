@@ -48,11 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GL2D.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="TextureAtlas.cs" />
+    <Compile Include="src\GL2D.cs" />
+    <Compile Include="src\shader\Shader.cs" />
+    <Compile Include="src\Texture.cs" />
+    <Compile Include="src\TextureAtlas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextureLayer.cs" />
+    <Compile Include="src\TextureLayer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\shader\dvertex.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="src\shader\dframe.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
