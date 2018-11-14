@@ -59,7 +59,7 @@
     <EmbeddedResource Include="src\shader\dvertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="src\shader\dframe.glsl" />
+    <EmbeddedResource Include="src\shader\dfragment.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

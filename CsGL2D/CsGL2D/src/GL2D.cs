@@ -139,11 +139,11 @@ namespace CsGL2D
             
         }
 
-        public static void DrawImage(Texture texture, Rectangle dst, Color color)
+        public static void DrawImage(Texture texture, RectangleF dst, Color color)
         {
             DrawImage(texture, new Rectangle(0, 0, texture.Width, texture.Height), dst, color);
         }
-        public static void DrawImage(Texture texture, Rectangle src, Rectangle dst, Color color)
+        public static void DrawImage(Texture texture, RectangleF src, RectangleF dst, Color color)
         {
             
             positionData[vertexOffset + 0] = new Vector2(dst.X, dst.Y); //ol
@@ -158,7 +158,7 @@ namespace CsGL2D
             texturePosData[vertexOffset + 3] = new Vector3(0, 1, 0); //ul
             */
 
-            int texX = texture.px + src.X, texY = texture.py + src.Y;
+            float texX = texture.px + src.X, texY = texture.py + src.Y;
             texturePosData[vertexOffset + 0] = new Vector3(texX, texY, texture.z); //ol
             texturePosData[vertexOffset + 1] = new Vector3(texX + src.Width, texY, texture.z); //or
             texturePosData[vertexOffset + 2] = new Vector3(texX + src.Width, texY + src.Height, texture.z); //ur
@@ -185,7 +185,7 @@ namespace CsGL2D
             return CreateShader(
                 new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dvertex.glsl")).ReadToEnd()
                 ,
-                new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dframe.glsl")).ReadToEnd()
+                new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dfragment.glsl")).ReadToEnd()
             );
         }
         public static int CreateShader(string fragmentShaderCode)
