@@ -13,29 +13,36 @@ namespace CsGL2D_FormTest
 {
     public partial class Form1 : Form
     {
-        Texture texture,texture2;
+        DrawBuffer drawBuffer,drawBuffer2;
+        Texture texture;
+        Shader shader;
+        Context ctx;
         public Form1()
         {
             Console.WriteLine("start");
             InitializeComponent();
 
-
-
-            GL2D.SetRenderControl(this);
-            GL2D.LogError("Init control");
-            GL2D.UseShader(GL2D.CreateShader());
-            GL2D.LogError("Init shader");
-            GL2D.CreateBuffer(264000+4);
-            GL2D.LogError("Init buffer");
-            GL2D.LogError("Init cleanup");
-
-            Console.WriteLine("texture");
             texture = new Texture("test.png");
-            texture2 = new Texture("test2.png");
-            Console.WriteLine("texture");
 
-            TextureAtlas._DEBUG();
-            GL2D.LogError("Texture");
+            ctx = new Context(this);
+            //GL2D.SetRenderControl(this);
+
+            shader = new Shader();
+
+            drawBuffer = new DrawBuffer(264000);
+            drawBuffer2 = new DrawBuffer(4);
+
+            //this.CreateGraphics().Transform.
+
+            int size = 20;
+            int scale = 512;
+            for (int ix = 0; ix < scale; ix++)
+                for (int iy = 0; iy < scale; iy++)
+                {
+                    drawBuffer.DrawImage(texture, new Rectangle(ix * size, iy * size, size, size), Color.DarkGray);
+                }
+            drawBuffer.Update();
+
         }
 
         private void render()
@@ -43,26 +50,19 @@ namespace CsGL2D_FormTest
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             Console.WriteLine();
-            GL2D.ClearBuffer(Color.Black);
-            Random rnd = new Random();
-            int size = 20;
-            int scale = 512;
-            for (int ix = 0; ix < 256; ix++)
-                for (int iy = 0; iy < 256; iy++)
-                {
-                    GL2D.DrawImage(texture2, new Rectangle(ix * size, iy * size, size, size), Color.DarkGray);
-                    GL2D.DrawImage(texture, new Rectangle(ix * size, iy * size, size, size), Color.DarkGray);
-                }
-            GL2D.DrawImage(texture, new Rectangle(64,64,64,64), Color.Lime);
-            GL2D.DrawImage(texture2, new Rectangle(0, 128, 128, 128), Color.White);
-            GL2D.DrawImage(texture, new Rectangle(512, 512, 64, 64), Color.White);
-            GL2D.DrawImage(texture, new Rectangle(this.ClientSize.Width-64, this.ClientSize.Height-64, 64, 64), Color.Blue);
-            GL2D.UpdateBuffer();
-            GL2D.LogError("Update");
-            GL2D.Render();
-            GL2D.LogError("Render");
-            GL2D.SwapBuffers();
-            GL2D.LogError("Swap");
+
+            ctx.Clear(Color.Black);
+
+
+            ctx.Render(drawBuffer, shader);
+            drawBuffer2.Clear();
+            drawBuffer2.DrawImage(texture, new Rectangle(64, 64, 64, 64), Color.Lime);
+            drawBuffer2.DrawImage(texture, new Rectangle(512, 512, 64, 64), Color.White);
+            drawBuffer2.DrawImage(texture, new Rectangle(this.ClientSize.Width - 64, this.ClientSize.Height - 64, 64, 64), Color.Blue);
+            drawBuffer2.Update();
+            ctx.Render(drawBuffer2, shader);
+            ctx.Refresh();
+            //GL2D.SwapBuffers();
 
             stopwatch.Stop();
             label1.Text = ""+stopwatch.ElapsedMilliseconds;

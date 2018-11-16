@@ -33,7 +33,7 @@ namespace CsGL2D_Test
 
 
 
-            GL2D.ClearBuffer(Color.Red);
+            GL2D.Clear(Color.Red);
             GL2D.SwapBuffers();
             form.Refresh();
             Console.WriteLine(GL2D.IsRendererReady());
