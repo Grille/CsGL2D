@@ -78,7 +78,7 @@ namespace CsGL2D
         internal static int positionAttrib, texturePosAttrib, colorAttrib;
 
 
-        internal static int resolutionUniform;
+        internal static int resolutionUniform, translateUniform, scaleUniform;
         internal static int samplerUniform1;
 
         public static void UseBuffer(DrawBuffer buffer)

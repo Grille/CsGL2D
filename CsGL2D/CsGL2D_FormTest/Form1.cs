@@ -34,17 +34,16 @@ namespace CsGL2D_FormTest
 
             //this.CreateGraphics().Transform.
 
-            int size = 20;
-            int scale = 512;
+            int size = 64;
+            int scale = 64;
             for (int ix = 0; ix < scale; ix++)
                 for (int iy = 0; iy < scale; iy++)
                 {
                     drawBuffer.DrawImage(texture, new Rectangle(ix * size, iy * size, size, size), Color.DarkGray);
                 }
-            drawBuffer.Update();
-
         }
 
+        int index = 0;
         private void render()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -53,13 +52,14 @@ namespace CsGL2D_FormTest
 
             ctx.Clear(Color.Black);
 
+            drawBuffer.Index = index++;
+            drawBuffer.UpdateColor(Color.Red);
 
             ctx.Render(drawBuffer, shader);
             drawBuffer2.Clear();
             drawBuffer2.DrawImage(texture, new Rectangle(64, 64, 64, 64), Color.Lime);
             drawBuffer2.DrawImage(texture, new Rectangle(512, 512, 64, 64), Color.White);
             drawBuffer2.DrawImage(texture, new Rectangle(this.ClientSize.Width - 64, this.ClientSize.Height - 64, 64, 64), Color.Blue);
-            drawBuffer2.Update();
             ctx.Render(drawBuffer2, shader);
             ctx.Refresh();
             //GL2D.SwapBuffers();

@@ -13,16 +13,16 @@ namespace CsGL2D
 {
     public class Shader
     {
-        public Matrix Matrix;
         internal int id;
         static Shader()
         {
             if (GL2D.IsRendererReady() != 0)
                 GL2D.CreateThempContext();
         }
+
         public Shader()
         {
-            id = CreateShader(
+            id = createShader(
                 new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dvertex.glsl")).ReadToEnd()
                 ,
                 new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dfragment.glsl")).ReadToEnd()
@@ -30,7 +30,7 @@ namespace CsGL2D
         }
         public Shader(string fragmentShader)
         {
-            id = CreateShader(
+            id = createShader(
                 new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("CsGL2D.src.shader.dvertex.glsl")).ReadToEnd()
                 ,
                 fragmentShader
@@ -38,14 +38,14 @@ namespace CsGL2D
         }
         public Shader(string vertexShader,string fragmentShader)
         {
-            id = CreateShader(
+            id = createShader(
                 vertexShader
                 ,
                 fragmentShader
             );
         }
 
-        private int CreateShader(string vertexShaderCode, string fragmentShaderCode)
+        private int createShader(string vertexShaderCode, string fragmentShaderCode)
         {
             try
             {
@@ -76,14 +76,7 @@ namespace CsGL2D
 
                 //uniforms
                 GL2D.samplerUniform1 = GL.GetUniformLocation(shaderProgram, "uSampler");
-
-                //timeUniform = 
-                GL.GetUniformLocation(shaderProgram, "uTime");
-
                 GL2D.resolutionUniform = GL.GetUniformLocation(shaderProgram, "uResolution");
-
-                //colorUniform = 
-                GL.GetUniformLocation(shaderProgram, "uColor");
 
                 return shaderProgram;
             }
@@ -107,8 +100,24 @@ namespace CsGL2D
                 return -1;
             }
             else return shader;
-
         }
+        public void Uniform(string name, float value)
+        {
+            GL.Uniform1(GL.GetUniformLocation(id, name), value);
+        }
+        public void Uniform(string name, float value1, float value2)
+        {
+            GL.Uniform2(GL.GetUniformLocation(id, name), value1, value2);
+        }
+        public void Uniform(string name, float value1, float value2, float value3)
+        {
+            GL.Uniform3(GL.GetUniformLocation(id, name), value1, value2, value3);
+        }
+        public void Uniform(string name, float value1, float value2, float value3, float value4)
+        {
+            GL.Uniform4(GL.GetUniformLocation(id, name), value1, value2, value3, value4);
+        }
+
 
     }
 }

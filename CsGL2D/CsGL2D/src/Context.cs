@@ -43,11 +43,13 @@ namespace CsGL2D
         }
         public void Clear()
         {
-            GL2D.Clear();
+            Clear(Color.Black);
         }
         public void Clear(Color color)
         {
-            GL2D.Clear(color);
+            GL.ClearColor(color);
+            GL.Viewport(0, 0, glControl.Width, glControl.Height);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         public void Refresh()
         {
@@ -59,12 +61,15 @@ namespace CsGL2D
         public void Render(DrawBuffer drawBuffer,Shader shader)
         {
             glControl.MakeCurrent();
+            int indexOffset = drawBuffer.update();
             if (curBuffer != drawBuffer)
                 GL2D.UseBuffer(drawBuffer);
             if (curShader != shader)
                 GL2D.UseShader(shader);
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
             GL.Uniform2(GL2D.resolutionUniform, new Vector2(glControl.Width, glControl.Height));
+            //GL.Uniform2(GL2D.translateUniform, new Vector2(shader.Transform.transX, shader.Transform.transY));
+            //GL.Uniform2(GL2D.scaleUniform, new Vector2(shader.Transform.scaleX, shader.Transform.scaleY));
             //GL.DrawArrays(PrimitiveType.Triangles, 0, vertexOffset);
             //GL.DrawElements(BeginMode.Triangles,vertexOffset,DrawElementsType.)
 
@@ -72,7 +77,7 @@ namespace CsGL2D
             GL.BindTexture(TextureTarget.Texture2DArray, TextureAtlas.TextureArray);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, drawBuffer.indexBuffer);
-            GL.DrawElements(BeginMode.Triangles, drawBuffer.indexOffset, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(BeginMode.Triangles, indexOffset, DrawElementsType.UnsignedInt, 0);
         }
     }
 }
