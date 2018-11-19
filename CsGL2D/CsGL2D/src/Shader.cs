@@ -11,13 +11,33 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace CsGL2D
 {
-    public class Shader
+    public class Shader : IDisposable
     {
+        bool disposed = false;
         internal int id;
         static Shader()
         {
             if (GL2D.IsRendererReady() != 0)
                 GL2D.CreateThempContext();
+        }
+        ~Shader()
+        {
+            dispose();
+        }
+        public void Dispose()
+        {
+            dispose();
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void dispose()
+        {
+            if (disposed)
+                return;
+
+            if (GL2D.IsRendererReady() == 0)
+                GL.DeleteShader(id);
+
+            disposed = true;
         }
 
         public Shader()

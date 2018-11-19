@@ -37,9 +37,9 @@ namespace CsGL2D
             glControl.BorderStyle = BorderStyle.FixedSingle;
             glControl.Enabled = false;
             glControl.CreateControl();
-            glControl.MakeCurrent();
+            GL2D.MakeCurrent(glControl);
             control.Controls.Add(glControl);
-
+            
         }
         public void Clear()
         {
@@ -47,37 +47,39 @@ namespace CsGL2D
         }
         public void Clear(Color color)
         {
+            GL2D.MakeCurrent(glControl);
             GL.ClearColor(color);
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         public void Refresh()
         {
-            glControl.MakeCurrent();
+            GL2D.MakeCurrent(glControl);
             glControl.SwapBuffers();
             glControl.Refresh();
         }
 
         public void Render(DrawBuffer drawBuffer,Shader shader)
         {
-            glControl.MakeCurrent();
-            int indexOffset = drawBuffer.update();
+            Render(drawBuffer, shader, 0, drawBuffer.getLenght());
+        }
+        public void Render(DrawBuffer drawBuffer, Shader shader,int offset,int count)
+        {
+            GL2D.MakeCurrent(glControl);
+            drawBuffer.update();
             if (curBuffer != drawBuffer)
-                GL2D.UseBuffer(drawBuffer);
+                GL2D.UseBuffer(curBuffer = drawBuffer);
             if (curShader != shader)
-                GL2D.UseShader(shader);
+                GL2D.UseShader(curShader = shader);
+
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
             GL.Uniform2(GL2D.resolutionUniform, new Vector2(glControl.Width, glControl.Height));
-            //GL.Uniform2(GL2D.translateUniform, new Vector2(shader.Transform.transX, shader.Transform.transY));
-            //GL.Uniform2(GL2D.scaleUniform, new Vector2(shader.Transform.scaleX, shader.Transform.scaleY));
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, vertexOffset);
-            //GL.DrawElements(BeginMode.Triangles,vertexOffset,DrawElementsType.)
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2DArray, TextureAtlas.TextureArray);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, drawBuffer.indexBuffer);
-            GL.DrawElements(BeginMode.Triangles, indexOffset, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(BeginMode.Triangles, count*6, DrawElementsType.UnsignedInt, offset*6*4);
         }
     }
 }

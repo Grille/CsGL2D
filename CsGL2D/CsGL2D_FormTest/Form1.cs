@@ -34,8 +34,8 @@ namespace CsGL2D_FormTest
 
             //this.CreateGraphics().Transform.
 
-            int size = 64;
-            int scale = 64;
+            int size = 16;
+            int scale = 512;
             for (int ix = 0; ix < scale; ix++)
                 for (int iy = 0; iy < scale; iy++)
                 {
@@ -52,11 +52,13 @@ namespace CsGL2D_FormTest
 
             ctx.Clear(Color.Black);
 
-            drawBuffer.Index = index++;
-            drawBuffer.UpdateColor(Color.Red);
+            //drawBuffer.Index = index++;
+            //drawBuffer.UpdateColor(Color.Red);
 
             ctx.Render(drawBuffer, shader);
-            drawBuffer2.Clear();
+            //for (int i=0;i< 4; i++) ctx.Render(drawBuffer, shader, i* 512, 4);
+
+            drawBuffer2.Reset();
             drawBuffer2.DrawImage(texture, new Rectangle(64, 64, 64, 64), Color.Lime);
             drawBuffer2.DrawImage(texture, new Rectangle(512, 512, 64, 64), Color.White);
             drawBuffer2.DrawImage(texture, new Rectangle(this.ClientSize.Width - 64, this.ClientSize.Height - 64, 64, 64), Color.Blue);

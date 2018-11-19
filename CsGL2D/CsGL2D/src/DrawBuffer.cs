@@ -10,7 +10,7 @@ using System.Text;
 
 namespace CsGL2D
 {
-    public class DrawBuffer
+    public class DrawBuffer : IDisposable
     {
         public int Index {
             get => indexOffset/6;
@@ -23,9 +23,10 @@ namespace CsGL2D
             }
         }
 
+        bool disposed = false;
         private bool vertexChanged = false, sourceChanged = false,colorChanged = false;
 
-        private int maxIndex = 0;
+        internal int maxIndex = 0;
         internal int vertexOffset, indexOffset;
         internal int length;
         internal int positionBuffer, texturePosBuffer, colorBuffer, indexBuffer;
@@ -40,6 +41,30 @@ namespace CsGL2D
             if (GL2D.IsRendererReady() != 0)
                 GL2D.CreateThempContext();
         }
+        ~DrawBuffer()
+        {
+            dispose();
+        }
+        public void Dispose()
+        {
+            dispose();
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void dispose()
+        {
+            if (disposed)
+                return;
+
+            if (GL2D.IsRendererReady() == 0)
+            {
+                GL.DeleteBuffer(indexBuffer);
+                GL.DeleteBuffer(positionBuffer);
+                GL.DeleteBuffer(texturePosBuffer);
+                GL.DeleteBuffer(colorBuffer);
+            }
+            disposed = true;
+        }
+
         public DrawBuffer(int bufferSize)
         {
             //GL.BindVertexArray(GL.GenVertexArray());
@@ -66,7 +91,7 @@ namespace CsGL2D
                 indexData[indexOffset + 5] = vertexOffset + 0;
                 Index++;
             }
-            Clear();
+            Reset();
 
             GL.GenBuffers(1, out indexBuffer);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
@@ -93,9 +118,12 @@ namespace CsGL2D
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorBuffer);
             GL.VertexAttribPointer(GL2D.colorAttrib, 4, VertexAttribPointerType.Float, false, 0, 0);
         }
-        internal int update()
+        internal int getLenght()
         {
-            int drawIndexOffset = Math.Max(indexOffset, maxIndex * 6);
+            return Math.Max(indexOffset, maxIndex);
+        }
+        internal void update()
+        {
             int drawVertexOffset = Math.Max(vertexOffset, maxIndex * 4);
 
             if (vertexChanged)
@@ -115,14 +143,23 @@ namespace CsGL2D
                 GL.BufferSubData<Vector4>(BufferTarget.ArrayBuffer, (IntPtr)(0 * 16), drawVertexOffset * 16, colorData);
             }
             vertexChanged = sourceChanged = colorChanged = false;
-
-            return drawIndexOffset;
         }
-        public void Clear()
+        public void Reset()
         {
             indexOffset = 0;
             vertexOffset = 0;
             maxIndex = 0;
+        }
+        public void Clear()
+        {
+            Reset();
+            for (int i = 0; i < positionData.Length; i++)
+            {
+                positionData[i] = new Vector2(0, 0);
+                texturePosData[i] = new Vector3(0, 0, 0);
+                colorData[i] = new Vector4(255, 255, 255, 255);
+            }
+            vertexChanged = sourceChanged = colorChanged = true;
         }
         public void DrawImage(Texture texture, RectangleF dst, Color color)
         {

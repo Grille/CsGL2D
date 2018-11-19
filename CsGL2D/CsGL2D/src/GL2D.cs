@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 
 namespace CsGL2D
 {
-    public static class GL2D
+    internal static class GL2D
     {
         static GLControl glControl;
         internal static void CreateThempContext()
@@ -26,46 +26,18 @@ namespace CsGL2D
             glControl = new GLControl(GraphicsMode.Default, 3, 0,GraphicsContextFlags.Default);
             glControl.CreateControl();
         }
-        public static void GetRenderContext(Control control)
+        public static void MakeCurrent(GLControl control)
         {
-
-        }
-        public static void SetRenderControl(System.Windows.Forms.Control control)
-        {
-            //Console.WriteLine(Assembly.GetExecutingAssembly().GetManifestResourceNames()[0]);
-            
-            glControl = new GLControl(
-            GraphicsMode.Default, 3, 0,
-            GraphicsContextFlags.Default);
-            glControl.Dock = DockStyle.Fill;
-            glControl.BackColor = Color.Black;
-            glControl.BorderStyle = BorderStyle.FixedSingle;
-            glControl.Enabled = false;
-            glControl.CreateControl();
-            glControl.MakeCurrent();
-            control.Controls.Add(glControl);
-        }
-        public static void SwapBuffers()
-        {
-            glControl.SwapBuffers();
-            glControl.Refresh();
+            control.MakeCurrent();
+            glControl = control;
         }
         public static byte IsRendererReady()
         {
+            
             if (glControl == null) return 2;
             if (!glControl.IsHandleCreated) return 3;
             if (GL.GetInteger(GetPName.MajorVersion) < 2) return 1;
             return 0;
-        }
-        public static void Clear()
-        {
-            Clear(Color.Black);
-        }
-        public static void Clear(Color color)
-        {
-            GL.ClearColor(color);
-            GL.Viewport(0, 0, glControl.Width, glControl.Height);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         public static string GetError()
         {
