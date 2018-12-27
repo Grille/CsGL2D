@@ -39,7 +39,7 @@ namespace CsGL2D
             glControl.CreateControl();
             GL2D.MakeCurrent(glControl);
             control.Controls.Add(glControl);
-            
+            Console.WriteLine(GL2D.IsRendererReady());
         }
         public void Clear()
         {

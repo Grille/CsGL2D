@@ -118,9 +118,9 @@ namespace CsGL2D
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorBuffer);
             GL.VertexAttribPointer(GL2D.colorAttrib, 4, VertexAttribPointerType.Float, false, 0, 0);
         }
-        internal int getLenght()
+        public int getLenght()
         {
-            return Math.Max(indexOffset, maxIndex);
+            return Math.Max(Index, maxIndex);
         }
         internal void update()
         {
@@ -173,11 +173,11 @@ namespace CsGL2D
             positionData[vertexOffset + 2] = new Vector2(dst.X + dst.Width, dst.Y + dst.Height); //ur
             positionData[vertexOffset + 3] = new Vector2(dst.X, dst.Y + dst.Height); //ul
 
-            float texX = texture.px + src.X, texY = texture.py + src.Y;
+            float texX = texture.px + src.X+0.5f, texY = texture.py + src.Y+0.5f;
             texturePosData[vertexOffset + 0] = new Vector3(texX, texY, texture.z); //ol
-            texturePosData[vertexOffset + 1] = new Vector3(texX + src.Width, texY, texture.z); //or
-            texturePosData[vertexOffset + 2] = new Vector3(texX + src.Width, texY + src.Height, texture.z); //ur
-            texturePosData[vertexOffset + 3] = new Vector3(texX, texY + src.Height, texture.z); //ul
+            texturePosData[vertexOffset + 1] = new Vector3(texX + src.Width-1, texY, texture.z); //or
+            texturePosData[vertexOffset + 2] = new Vector3(texX + src.Width-1, texY + src.Height-1, texture.z); //ur
+            texturePosData[vertexOffset + 3] = new Vector3(texX, texY + src.Height-1, texture.z); //ul
 
             colorData[vertexOffset + 0] =
             colorData[vertexOffset + 1] =
@@ -199,11 +199,11 @@ namespace CsGL2D
         }
         public void UpdateSrc(Texture texture, RectangleF src)
         {
-            float texX = texture.px + src.X, texY = texture.py + src.Y;
+            float texX = texture.px + src.X + 0.5f, texY = texture.py + src.Y + 0.5f;
             texturePosData[vertexOffset + 0] = new Vector3(texX, texY, texture.z); //ol
-            texturePosData[vertexOffset + 1] = new Vector3(texX + src.Width, texY, texture.z); //or
-            texturePosData[vertexOffset + 2] = new Vector3(texX + src.Width, texY + src.Height, texture.z); //ur
-            texturePosData[vertexOffset + 3] = new Vector3(texX, texY + src.Height, texture.z); //ul
+            texturePosData[vertexOffset + 1] = new Vector3(texX + src.Width - 1, texY, texture.z); //or
+            texturePosData[vertexOffset + 2] = new Vector3(texX + src.Width - 1, texY + src.Height - 1, texture.z); //ur
+            texturePosData[vertexOffset + 3] = new Vector3(texX, texY + src.Height - 1, texture.z); //ul
 
             sourceChanged = true;
         }

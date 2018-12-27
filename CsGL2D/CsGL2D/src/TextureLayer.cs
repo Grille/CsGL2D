@@ -122,10 +122,12 @@ namespace CsGL2D
             GL.BindTexture(TextureTarget.Texture2DArray, TextureAtlas.TextureArray);
             //GL.TexImage3D(TextureTarget.Texture3D, 0, PixelInternalFormat.Rgba8, w, h, 1, 0, PixelFormat.Rgba, PixelType.Byte, data);
             GL.TexSubImage3D(TextureTarget.Texture2DArray, 0, x*tileSize, y * tileSize, idz, img.Width, img.Height, 1, PixelFormat.Bgra, PixelType.UnsignedByte, data);
-            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapLinear);
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            /*
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+            */
         }
         public void Defrag()
         {

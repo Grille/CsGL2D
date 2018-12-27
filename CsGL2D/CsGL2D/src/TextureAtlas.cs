@@ -22,6 +22,13 @@ namespace CsGL2D
             TextureArray = GL.GenTexture();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2DArray, TextureArray);
+
+            Console.WriteLine("->" + GL.GetString(StringName.Renderer));
+            Console.WriteLine("->" + GL.GetInteger(GetPName.MajorVersion));
+            Console.WriteLine("->"+GL.GetInteger(GetPName.MaxArrayTextureLayers));
+            Console.WriteLine("->" + GL.GetInteger(GetPName.MaxTextureSize));
+
+
             GL.TextureStorage3D(TextureArray, 1, SizedInternalFormat.Rgba8, 2048, 2048, layer);
         }
         static public void _DEBUG()

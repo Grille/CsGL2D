@@ -52,6 +52,7 @@
     <Compile Include="src\DrawBuffer.cs" />
     <Compile Include="src\GL2D.cs" />
     <Compile Include="src\Shader.cs" />
+    <Compile Include="src\Matrix.cs" />
     <Compile Include="src\Texture.cs" />
     <Compile Include="src\TextureAtlas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,9 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="src\shader\dfragment.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shader\library.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

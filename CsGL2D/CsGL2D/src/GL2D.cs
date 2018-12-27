@@ -25,6 +25,7 @@ namespace CsGL2D
         {
             glControl = new GLControl(GraphicsMode.Default, 3, 0,GraphicsContextFlags.Default);
             glControl.CreateControl();
+            Console.WriteLine(GL2D.IsRendererReady());
         }
         public static void MakeCurrent(GLControl control)
         {
