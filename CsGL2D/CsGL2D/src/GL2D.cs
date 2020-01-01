@@ -66,7 +66,7 @@ namespace CsGL2D
             GL.Enable(EnableCap.Texture2D);
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             GL.UseProgram(shader.id);
 

@@ -1,4 +1,5 @@
 CsGL2D/.vs
 CsGL2D/*/bin
 CsGL2D/*/obj
+CsGL2D/packages
 *.csproj.user
